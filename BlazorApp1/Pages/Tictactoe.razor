@@ -22,7 +22,7 @@
         min-width: 60px;
         background-repeat: no-repeat;
         text-align: center;
-        font-size: 36px;
+        font-size: 38px;
     }
 
     .x {
@@ -56,7 +56,7 @@ else
                 int x = i;
                 int y = j;
                 <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(x, y))">
-                    @(board.Board[i, j].Style == PieceStyle.Blank ? "" : @board.Board[i, j].Style.ToString().ToLower())
+                    @(board.Board[i, j].Style == PieceStyle.Blank ? "" : @board.Board[i, j].Style.ToString().ToUpper())
                 </div>
             }
         </div>
