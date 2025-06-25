@@ -14,6 +14,7 @@ namespace BlazorApp1.Models
 
         protected GameBoard(int rowsAndCols)
         {
+            Board = new GamePiece[_rowsAndCols, _rowsAndCols];
             _rowsAndCols = rowsAndCols;
             Reset();
         }
@@ -21,7 +22,6 @@ namespace BlazorApp1.Models
         public void Reset()
         {
             Board = new GamePiece[_rowsAndCols, _rowsAndCols];
-
             int max = _rowsAndCols - 1;
             //Populate the Board with blank pieces
             for (int i = 0; i <= max; i++)
