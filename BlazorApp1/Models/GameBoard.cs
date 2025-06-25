@@ -4,7 +4,7 @@ namespace BlazorApp1.Models
 {
     public abstract class GameBoard
     {
-        private readonly int _rowsAndCols;
+        protected readonly int _rowsAndCols;
 
         public GamePiece[,] Board { get; private set; }
 
@@ -34,30 +34,7 @@ namespace BlazorApp1.Models
         }
 
         //Given the coordinates of the space that was clicked...
-        public void PieceClicked(int x, int y)
-        {
-            //If the game is complete, do nothing
-            if (IsGameComplete)
-            {
-                return;
-            }
-
-            //If the space is not already claimed...
-            GamePiece clickedSpace = Board[x, y];
-            if (clickedSpace.Style == PieceStyle.Blank)
-            {
-                //Set the marker to the current turn marker (X or O), then make it the other player's turn
-                clickedSpace.Style = CurrentTurn;
-                SwitchTurns();
-            }
-        }
-
-        private void SwitchTurns()
-        {
-            //This is equivalent to: if currently X's turn, 
-            // make it O's turn, and vice-versa
-            CurrentTurn = CurrentTurn == PieceStyle.X ? PieceStyle.O : PieceStyle.X;
-        }
+        public abstract void PieceClicked(int x, int y);
 
         public bool IsADraw()
         {
