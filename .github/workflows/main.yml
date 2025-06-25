@@ -31,7 +31,7 @@ jobs:
         run: dotnet publish BlazorApp1/BlazorApp1.csproj -c:Release -p:GHPages=true -o dist/Demo1 --nologo
 
       - name: fix base href
-      - uses: SteveSandersonMS/ghaction-rewrite-base-href@v1.1.0
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@v1.1.0
         with:
           html_path: 'dist/Demo1/wwwroot/index.html'
           base_href: '/Tictactoe/'
