@@ -2,23 +2,26 @@
 
 namespace BlazorApp1.Models
 {
-    public class GameBoard
+    public abstract class GameBoard
     {
-        private const int _rowsAndCols = 3;
+        private readonly int _rowsAndCols;
 
-        public GamePiece[,] Board { get; private set; } = new GamePiece[_rowsAndCols, _rowsAndCols];
+        public GamePiece[,] Board { get; private set; }
 
         public PieceStyle CurrentTurn = PieceStyle.X;
 
         public bool IsGameComplete => GetWinner() != null || IsADraw();
 
-        public GameBoard()
+        protected GameBoard(int rowsAndCols)
         {
+            _rowsAndCols = rowsAndCols;
             Reset();
         }
 
         public void Reset()
         {
+            Board = new GamePiece[_rowsAndCols, _rowsAndCols];
+
             int max = _rowsAndCols - 1;
             //Populate the Board with blank pieces
             for (int i = 0; i <= max; i++)
@@ -94,7 +97,6 @@ namespace BlazorApp1.Models
             }
 
             return winningPlay;
-
         }
 
         private WinningPlay? EvaluatePieceForWinner(int i, int j, EvaluationDirection dir)

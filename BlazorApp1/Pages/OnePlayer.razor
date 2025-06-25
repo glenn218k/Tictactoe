@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/OnePlayer"
 @using BlazorApp1.Enums
 @using BlazorApp1.Models
 
@@ -34,7 +34,7 @@
     }
 </style>
 
-<PageTitle>Tic Tac Toe</PageTitle>
+<PageTitle>One Player Tic Tac Toe</PageTitle>
 
 @if (!board.IsGameComplete)
 {
@@ -64,5 +64,5 @@ else
 </div>
 
 @code {
-    GameBoard board = new GameBoard();
+    TwoPlayerGameBoard board = new TwoPlayerGameBoard();
 }
