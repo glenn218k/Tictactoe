@@ -6,7 +6,7 @@ namespace BlazorApp1.Models
     {
         protected readonly int _rowsAndCols;
 
-        public static Player PlayerOne { get; } = new Player() { PieceStyle = PieceStyle.X, Name = "Player One", Icon = "X" };
+        public static Player PlayerOne { get; } = new Player() { PieceStyle = PieceStyle.X, Name = "Player One", Icon = "X", Color = "Red" };
 
         public GamePiece[,] Board { get; private set; }
 
@@ -15,6 +15,8 @@ namespace BlazorApp1.Models
         public bool IsGameComplete => GetWinner() != null || IsADraw();
 
         public abstract string GetIcon(PieceStyle style);
+
+        public abstract string GetColor(PieceStyle style);
 
         protected GameBoard(int rowsAndCols)
         {

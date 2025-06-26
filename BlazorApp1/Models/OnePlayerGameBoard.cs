@@ -11,8 +11,18 @@ namespace BlazorApp1.Models
         {
             return style switch
             {
-                PieceStyle.X => PlayerOne.Icon ?? PieceStyle.X.ToString(),
-                PieceStyle.O => PlayerAi.Icon ?? PieceStyle.O.ToString(),
+                PieceStyle.X => PlayerOne.Icon!,
+                PieceStyle.O => PlayerAi.Icon!,
+                _ => string.Empty
+            };
+        }
+
+        public override string GetColor(PieceStyle style)
+        {
+            return style switch
+            {
+                PieceStyle.X => PlayerOne.Color!,
+                PieceStyle.O => PlayerAi.Color!,
                 _ => string.Empty
             };
         }
@@ -29,7 +39,7 @@ namespace BlazorApp1.Models
             }
         }
 
-        public static Player PlayerAi { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "CPU", Icon = "O" };
+        public static Player PlayerAi { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "CPU", Icon = "O", Color = "Blue" };
 
         //Given the coordinates of the space that was clicked...
         public override void PieceClicked(int x, int y)
@@ -88,6 +98,9 @@ namespace BlazorApp1.Models
             }
             else
             {
+                // attempt to give 2 chances to win
+
+
                 for (int i = 0; i < _rowsAndCols; i++)
                 {
                     for (int j = 0; j < _rowsAndCols; j++)

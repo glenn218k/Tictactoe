@@ -24,14 +24,6 @@
         text-align: center;
         font-size: 38px;
     }
-
-    .x {
-        color: red;
-    }
-
-    .o {
-        color: blue;
-    }
 </style>
 
 <PageTitle>Two Player Tic Tac Toe</PageTitle>
@@ -55,7 +47,7 @@ else
             {
                 int x = i;
                 int y = j;
-                <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(x, y))">
+                <div class="gamepiece" style="color:@(board.GetColor(board.Board[i, j].Style))" @onclick="@(() => board.PieceClicked(x, y))">
                     @(board.GetIcon(board.Board[i, j].Style))
                 </div>
             }

@@ -4,7 +4,7 @@ namespace BlazorApp1.Models
 {
     public class TwoPlayerGameBoard : GameBoard
     {
-        public static Player PlayerTwo { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "Player Two", Icon = "O" };
+        public static Player PlayerTwo { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "Player Two", Icon = "O", Color = "Blue" };
 
         public TwoPlayerGameBoard()
             : base(3) { }
@@ -13,8 +13,18 @@ namespace BlazorApp1.Models
         {
             return style switch
             {
-                PieceStyle.X => PlayerOne.Icon ?? PieceStyle.X.ToString(),
-                PieceStyle.O => PlayerTwo.Icon ?? PieceStyle.O.ToString(),
+                PieceStyle.X => PlayerOne.Icon!,
+                PieceStyle.O => PlayerTwo.Icon!,
+                _ => string.Empty
+            };
+        }
+
+        public override string GetColor(PieceStyle style)
+        {
+            return style switch
+            {
+                PieceStyle.X => PlayerOne.Color!,
+                PieceStyle.O => PlayerTwo.Color!,
                 _ => string.Empty
             };
         }
