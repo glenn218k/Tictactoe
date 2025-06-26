@@ -1,5 +1,4 @@
 ﻿using BlazorApp1.Enums;
-using System.Diagnostics;
 
 namespace BlazorApp1.Models
 {
@@ -36,9 +35,9 @@ namespace BlazorApp1.Models
 
         private void MakeMove()
         {
-            //If the game is complete, do nothing
             if (IsGameComplete)
             {
+                //If the game is complete, do nothing
                 return;
             }
 

@@ -53,9 +53,7 @@ else
         <div class="column">
             @for (int j = 0; j < 3; j++)
             {
-                int x = i;
-                int y = j;
-                <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(x, y))">
+                <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(i, j))">
                     @(board.Board[i, j].Style == PieceStyle.Blank ? "" : @board.Board[i, j].Style.ToString().ToUpper())
                 </div>
             }
