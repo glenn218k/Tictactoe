@@ -141,9 +141,6 @@ namespace BlazorApp1.Models
                 {
                     var piece = Board[i,j];
 
-                    Debug.WriteLine($"getting-({i},{j}): {piece.Style}");
-                    Console.WriteLine($"getting-({i},{j}): {piece.Style}");
-
                     switch (piece.Style)
                     {
                         case PieceStyle.X:
@@ -153,14 +150,12 @@ namespace BlazorApp1.Models
                             }
                             else
                             {
-                                Debug.WriteLine($"added to player-({i},{j}): {piece.Style}");
                                 listOfPlayer.Add((i, j));
                             }
                             break;
                         case PieceStyle.O:
                             if (pieceStyle == PieceStyle.O)
                             {
-                                Debug.WriteLine($"added to ai-({i},{j}): {piece.Style}");
                                 listOfAi.Add((i, j));
                             }
                             else
@@ -185,43 +180,14 @@ namespace BlazorApp1.Models
 
             if (nextMoveToWin is not null && nextMoveToWin.Any())
             {
-                Debug.WriteLine($"before");
-                foreach (var aa in nextMoveToWin)
-                {
-                    int i = 0;
-                    foreach (var bb in aa)
-                    {
-                        i++;
-                        Debug.WriteLine($"before-{i}: {bb}");
-                    }
-                }
-                Debug.WriteLine($"before");
-
-                Debug.WriteLine($"beforeAi");
                 foreach (var ai in listOfAi)
                 {
                     nextMoveToWin.ForEach(w => w.Remove(ai));
                 }
-                Debug.WriteLine($"afterAi");
-
-                Debug.WriteLine($"beforePlayer");
                 foreach (var pl in listOfPlayer)
                 {
                     nextMoveToWin.ForEach(w => w.Remove(pl));
                 }
-                Debug.WriteLine($"afterPlayer");
-
-                Debug.WriteLine($"after");
-                foreach (var aa in nextMoveToWin)
-                {
-                    int i = 0;
-                    foreach (var bb in aa)
-                    {
-                        i++;
-                        Debug.WriteLine($"after-{i}: {bb}");
-                    }
-                }
-                Debug.WriteLine($"after");
 
                 if (nextMoveToWin?.Any() == true)
                 {
@@ -229,14 +195,7 @@ namespace BlazorApp1.Models
 
                     if (a?.Any() == true)
                     {
-                        var b = a?.FirstOrDefault();
-                        var winningMove = b;
-
-                        Debug.WriteLine($"before winningMove");
-                        if (winningMove != null)
-                        {
-                            Debug.WriteLine($"winningMove: ({winningMove.Value.Item1}, {winningMove.Value.Item2})");
-                        }
+                        var winningMove = a?.FirstOrDefault();
 
                         return winningMove;
                     }

@@ -21,6 +21,7 @@ namespace BlazorApp1.Models
 
         public void Reset()
         {
+            CurrentTurn = PieceStyle.X;
             Board = new GamePiece[_rowsAndCols, _rowsAndCols];
             int max = _rowsAndCols - 1;
             //Populate the Board with blank pieces
