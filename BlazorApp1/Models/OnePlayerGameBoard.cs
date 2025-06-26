@@ -7,7 +7,29 @@ namespace BlazorApp1.Models
         public OnePlayerGameBoard()
             : base(3) { }
 
-        private const PieceStyle _aiPieceStyle = PieceStyle.O;
+        public override string GetIcon(PieceStyle style)
+        {
+            return style switch
+            {
+                PieceStyle.X => PlayerOne.Icon ?? PieceStyle.X.ToString(),
+                PieceStyle.O => PlayerAi.Icon ?? PieceStyle.O.ToString(),
+                _ => string.Empty
+            };
+        }
+
+        protected override Player GetOtherPlayer(Player currentPlayer)
+        {
+            if (currentPlayer == PlayerOne)
+            {
+                return PlayerAi;
+            }
+            else
+            {
+                return PlayerOne;
+            }
+        }
+
+        public static Player PlayerAi { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "CPU", Icon = "O" };
 
         //Given the coordinates of the space that was clicked...
         public override void PieceClicked(int x, int y)
@@ -23,11 +45,11 @@ namespace BlazorApp1.Models
             if (clickedSpace.Style == PieceStyle.Blank)
             {
                 //Set the marker to the current turn marker (X or O), then make it the other player's turn
-                clickedSpace.Style = PieceStyle.X;
+                clickedSpace.Style = PlayerOne.PieceStyle;
 
                 //This is equivalent to: if currently X's turn, 
                 // make it O's turn, and vice-versa
-                CurrentTurn = PieceStyle.O;
+                CurrentTurn = PlayerAi;
 
                 MakeMove();
             }
@@ -45,24 +67,24 @@ namespace BlazorApp1.Models
             if (mid.Style == PieceStyle.Blank)
             {
                 // always go middle if possible
-                mid.Style = PieceStyle.O;
-                CurrentTurn = PieceStyle.X;
+                mid.Style = PlayerAi.PieceStyle;
+                CurrentTurn = PlayerOne;
             }
-            else if (NextMoveToWin(_aiPieceStyle) is (int,int) aiMove)
+            else if (NextMoveToWin(PlayerAi.PieceStyle) is (int,int) aiMove)
             {
                 // always win if possible
                 GamePiece clickedSpace = Board[aiMove.Item1, aiMove.Item2];
 
-                clickedSpace.Style = PieceStyle.O;
-                CurrentTurn = PieceStyle.X;
+                clickedSpace.Style = PlayerAi.PieceStyle;
+                CurrentTurn = PlayerOne;
             }
-            else if (NextMoveToWin(_aiPieceStyle == PieceStyle.O ? PieceStyle.X : PieceStyle.O) is (int, int) blockingMove)
+            else if (NextMoveToWin(PlayerOne.PieceStyle) is (int, int) blockingMove)
             {
                 // always block if possible
                 GamePiece clickedSpace = Board[blockingMove.Item1, blockingMove.Item2];
 
-                clickedSpace.Style = PieceStyle.O;
-                CurrentTurn = PieceStyle.X;
+                clickedSpace.Style = PlayerAi.PieceStyle;
+                CurrentTurn = PlayerOne;
             }
             else
             {
@@ -73,8 +95,8 @@ namespace BlazorApp1.Models
                         var piece = Board[i, j];
                         if (piece.Style == PieceStyle.Blank)
                         {
-                            piece.Style = PieceStyle.O;
-                            CurrentTurn = PieceStyle.X;
+                            piece.Style = PlayerAi.PieceStyle;
+                            CurrentTurn = PlayerOne;
 
                             return;
                         }
@@ -83,7 +105,7 @@ namespace BlazorApp1.Models
             }
         }
 
-        private static List<List<(int, int)>> WinningCombos =
+        private static readonly List<List<(int, int)>> WinningCombos =
             [
                 [
                     new (0,0),
@@ -172,12 +194,12 @@ namespace BlazorApp1.Models
             List<List<(int, int)>> combos = [];
             foreach(var wc in WinningCombos)
             {
-                combos.Add(wc.ToList());
+                combos.Add([.. wc]);
             }
 
             var nextMoveToWin = combos.Where(c => listOfAi.Count(a => c.Contains(a)) == 2).ToList();
 
-            if (nextMoveToWin is not null && nextMoveToWin.Any())
+            if (nextMoveToWin is not null && nextMoveToWin.Count > 0)
             {
                 foreach (var ai in listOfAi)
                 {

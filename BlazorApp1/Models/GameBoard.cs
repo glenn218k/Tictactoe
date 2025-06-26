@@ -6,11 +6,15 @@ namespace BlazorApp1.Models
     {
         protected readonly int _rowsAndCols;
 
+        public static Player PlayerOne { get; } = new Player() { PieceStyle = PieceStyle.X, Name = "Player One", Icon = "X" };
+
         public GamePiece[,] Board { get; private set; }
 
-        public PieceStyle CurrentTurn = PieceStyle.X;
+        public Player CurrentTurn = PlayerOne;
 
         public bool IsGameComplete => GetWinner() != null || IsADraw();
+
+        public abstract string GetIcon(PieceStyle style);
 
         protected GameBoard(int rowsAndCols)
         {
@@ -21,7 +25,7 @@ namespace BlazorApp1.Models
 
         public void Reset()
         {
-            CurrentTurn = PieceStyle.X;
+            CurrentTurn = PlayerOne;
             Board = new GamePiece[_rowsAndCols, _rowsAndCols];
             int max = _rowsAndCols - 1;
             //Populate the Board with blank pieces
@@ -130,22 +134,26 @@ namespace BlazorApp1.Models
             if (inARow >= _rowsAndCols)
             {
                 winningMoves.Add($"{i},{j}");
+                var other = GetOtherPlayer(CurrentTurn);
 
                 return new WinningPlay()
                 {
                     WinningMoves = winningMoves,
-                    WinningStyle = currentPiece.Style,
+                    WinningStyle = other.PieceStyle,
                     WinningDirection = dir,
+                    WinningName = other.Name
                 };
             }
 
             return null;
         }
 
+        protected abstract Player GetOtherPlayer(Player currentPlayer);
+
         public string GetGameCompleteMessage()
         {
             var winningPlay = GetWinner();
-            return winningPlay != null ? $"{winningPlay.WinningStyle} Wins!" : "Draw!";
+            return winningPlay != null ? $"{winningPlay.WinningName} ({winningPlay.WinningStyle}) Wins!" : "Draw!";
         }
 
         public bool IsGamePieceAWinningPiece(int i, int j)

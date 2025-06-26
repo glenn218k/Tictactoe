@@ -7,5 +7,6 @@ namespace BlazorApp1.Models
         public List<string> WinningMoves { get; set; } = [];
         public EvaluationDirection WinningDirection { get; set; }
         public PieceStyle WinningStyle { get; set; }
+        public string? WinningName { get; set; }
     }
 }

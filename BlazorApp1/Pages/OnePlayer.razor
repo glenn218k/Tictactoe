@@ -39,7 +39,7 @@
 
 @if (!board.IsGameComplete)
 {
-    <h2>@board.CurrentTurn's Turn!</h2>
+    <h2>@board.CurrentTurn.Name's (@board.CurrentTurn.Icon) Turn!</h2>
 }
 else
 {
@@ -54,8 +54,10 @@ else
         <div class="column">
             @for (int j = 0; j < 3; j++)
             {
-                <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(i, j))">
-                    @(board.Board[i, j].Style == PieceStyle.Blank ? "" : @board.Board[i, j].Style.ToString().ToUpper())
+                int x = i;
+                int y = j;
+                <div class="gamepiece @board.Board[i, j].Style.ToString().ToLower()" @onclick="@(() => board.PieceClicked(x, y))">
+                    @(board.GetIcon(board.Board[i, j].Style))
                 </div>
             }
         </div>
