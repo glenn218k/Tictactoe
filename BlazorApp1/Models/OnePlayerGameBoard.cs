@@ -1,4 +1,5 @@
 ﻿using BlazorApp1.Enums;
+using System.Diagnostics;
 
 namespace BlazorApp1.Models
 {
@@ -47,24 +48,25 @@ namespace BlazorApp1.Models
                 // always go middle if possible
                 mid.Style = PieceStyle.O;
                 CurrentTurn = PieceStyle.X;
-                return;
             }
-
-            var move = NextMoveToWin();
-            if (move.HasValue)
+            else if (NextMoveToWin(_aiPieceStyle) is (int,int) aiMove)
             {
                 // always win if possible
-                GamePiece clickedSpace = Board[move.Value.Item1, move.Value.Item2];
+                GamePiece clickedSpace = Board[aiMove.Item1, aiMove.Item2];
 
                 clickedSpace.Style = PieceStyle.O;
                 CurrentTurn = PieceStyle.X;
+            }
+            else if (NextMoveToWin(_aiPieceStyle == PieceStyle.O ? PieceStyle.X : PieceStyle.O) is (int, int) blockingMove)
+            {
+                // always block if possible
+                GamePiece clickedSpace = Board[blockingMove.Item1, blockingMove.Item2];
 
-                return;
+                clickedSpace.Style = PieceStyle.O;
+                CurrentTurn = PieceStyle.X;
             }
             else
             {
-                // always block if possible
-
                 for (int i = 0; i < _rowsAndCols; i++)
                 {
                     for (int j = 0; j < _rowsAndCols; j++)
@@ -128,13 +130,7 @@ namespace BlazorApp1.Models
                 ]
             ];
 
-
-        private void DoNothing()
-        {
-
-        }
-
-        private (int, int)? NextMoveToWin()
+        private (int, int)? NextMoveToWin(PieceStyle pieceStyle)
         {
             List<(int, int)> listOfAi = [];
             List<(int, int)> listOfPlayer = [];
@@ -145,50 +141,106 @@ namespace BlazorApp1.Models
                 {
                     var piece = Board[i,j];
 
+                    Debug.WriteLine($"getting-({i},{j}): {piece.Style}");
+                    Console.WriteLine($"getting-({i},{j}): {piece.Style}");
+
                     switch (piece.Style)
                     {
-                        case PieceStyle.Blank:
-                            DoNothing();
-                            break;
                         case PieceStyle.X:
-                            if(_aiPieceStyle == PieceStyle.X)
+                            if(pieceStyle == PieceStyle.X)
                             {
                                 listOfAi.Add((i, j));
                             }
                             else
                             {
+                                Debug.WriteLine($"added to player-({i},{j}): {piece.Style}");
                                 listOfPlayer.Add((i, j));
                             }
                             break;
                         case PieceStyle.O:
-                            if (_aiPieceStyle == PieceStyle.X)
+                            if (pieceStyle == PieceStyle.O)
                             {
-                                listOfPlayer.Add((i, j));
+                                Debug.WriteLine($"added to ai-({i},{j}): {piece.Style}");
+                                listOfAi.Add((i, j));
                             }
                             else
                             {
-                                listOfAi.Add((i, j));
+                                listOfPlayer.Add((i, j));
                             }
                             break;
+                        case PieceStyle.Blank:
                         default:
-                            DoNothing();
                             break;
                     };
                 }
             }
 
-            var nextMoveToWin = WinningCombos.ToList().Where(c => listOfAi.Count(a => c.Contains(a)) == 2).ToList();
+            List<List<(int, int)>> combos = [];
+            foreach(var wc in WinningCombos)
+            {
+                combos.Add(wc.ToList());
+            }
+
+            var nextMoveToWin = combos.Where(c => listOfAi.Count(a => c.Contains(a)) == 2).ToList();
 
             if (nextMoveToWin is not null && nextMoveToWin.Any())
             {
-                listOfAi.ForEach(a => nextMoveToWin.ForEach(w => w.Remove(a)));
-                listOfPlayer.ForEach(b => nextMoveToWin.ForEach(w => w.Remove(b)));
+                Debug.WriteLine($"before");
+                foreach (var aa in nextMoveToWin)
+                {
+                    int i = 0;
+                    foreach (var bb in aa)
+                    {
+                        i++;
+                        Debug.WriteLine($"before-{i}: {bb}");
+                    }
+                }
+                Debug.WriteLine($"before");
 
-                var a = nextMoveToWin.FirstOrDefault();
-                var b = a?.FirstOrDefault();
+                Debug.WriteLine($"beforeAi");
+                foreach (var ai in listOfAi)
+                {
+                    nextMoveToWin.ForEach(w => w.Remove(ai));
+                }
+                Debug.WriteLine($"afterAi");
 
-                var winningMove = b;
-                return winningMove;
+                Debug.WriteLine($"beforePlayer");
+                foreach (var pl in listOfPlayer)
+                {
+                    nextMoveToWin.ForEach(w => w.Remove(pl));
+                }
+                Debug.WriteLine($"afterPlayer");
+
+                Debug.WriteLine($"after");
+                foreach (var aa in nextMoveToWin)
+                {
+                    int i = 0;
+                    foreach (var bb in aa)
+                    {
+                        i++;
+                        Debug.WriteLine($"after-{i}: {bb}");
+                    }
+                }
+                Debug.WriteLine($"after");
+
+                if (nextMoveToWin?.Any() == true)
+                {
+                    var a = nextMoveToWin.FirstOrDefault(w => w.Count > 0);
+
+                    if (a?.Any() == true)
+                    {
+                        var b = a?.FirstOrDefault();
+                        var winningMove = b;
+
+                        Debug.WriteLine($"before winningMove");
+                        if (winningMove != null)
+                        {
+                            Debug.WriteLine($"winningMove: ({winningMove.Value.Item1}, {winningMove.Value.Item2})");
+                        }
+
+                        return winningMove;
+                    }
+                }
             }
 
             return null;
