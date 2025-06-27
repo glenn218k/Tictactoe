@@ -24,6 +24,15 @@
         background-repeat: no-repeat;
         text-align: center;
         font-size: 38px;
+        color:aqua
+    }
+
+    .sampleColor {
+        border: solid 1px black;
+        min-height: 10px;
+        min-width: 10px;
+        max-height: 10px;
+        max-width: 100px;
     }
 </style>
 
@@ -35,10 +44,10 @@
 }
 else
 {
-    <h2>@board.GetGameCompleteMessage()
-        <button class="btn btn-success" style="height:34px" @onclick="@(() => board.Reset())">Reset</button>
-    </h2>
+    <h2>@board.GetGameCompleteMessage()</h2>
 }
+
+<button class="btn btn-success" style="height:34px" @onclick="@(() => board.Reset())">Reset</button>
 
 <div class="board">
     @for (int i = 0; i < 3; i++)
@@ -56,6 +65,34 @@ else
     }
 </div>
 
+<div>
+    <h2>Player One Name</h2>
+    <h2>Player One Name</h2>
+    <h2>Player One Color</h2>
+    <ul>
+        @foreach (var colorName in cssColors)
+        {
+            <li class="sampleColor" style="background-color:@colorName" @onclick="@(() => @board.SetPlayerOneColor(@colorName))">@colorName</li>
+        }
+    </ul>
+</div>
+
 @code {
+    private List<string> cssColors = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        // Get all known color names from System.Drawing.KnownColor enum
+        foreach (System.Drawing.KnownColor known in Enum.GetValues(typeof(System.Drawing.KnownColor)))
+        {
+            var color = System.Drawing.Color.FromKnownColor(known);
+            // Filter out system colors and add to the list
+            if (!color.IsSystemColor)
+            {
+                cssColors.Add(color.Name);
+            }
+        }
+    }
+
     OnePlayerGameBoard board = new OnePlayerGameBoard();
 }

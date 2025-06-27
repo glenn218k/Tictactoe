@@ -96,11 +96,16 @@ namespace BlazorApp1.Models
                 clickedSpace.Style = PlayerAi.PieceStyle;
                 CurrentTurn = PlayerOne;
             }
+            else if (NextMoveToSetupToWin(PlayerAi.PieceStyle) is (int, int) setupMove)
+            {
+                // win in 2 moves
+                GamePiece clickedSpace = Board[setupMove.Item1, setupMove.Item2];
+
+                clickedSpace.Style = PlayerAi.PieceStyle;
+                CurrentTurn = PlayerOne;
+            }
             else
             {
-                // attempt to give 2 chances to win
-
-
                 for (int i = 0; i < _rowsAndCols; i++)
                 {
                     for (int j = 0; j < _rowsAndCols; j++)
@@ -164,7 +169,49 @@ namespace BlazorApp1.Models
                 ]
             ];
 
-        private (int, int)? NextMoveToWin(PieceStyle pieceStyle)
+        private (int, int)? NextMoveToSetupToWin(PieceStyle pieceStyle)
+        {
+            var state = GetBoardState(pieceStyle);
+
+            List<(int, int)> listOfAi = state.Item1;
+            List<(int, int)> listOfPlayer = state.Item2;
+
+            List<List<(int, int)>> combos = [];
+            foreach (var wc in WinningCombos)
+            {
+                combos.Add([.. wc]);
+            }
+
+            var nextMoveToWin = combos.Where(c => listOfAi.Count(a => c.Contains(a)) == 1).ToList();
+
+            if (nextMoveToWin is not null && nextMoveToWin.Count > 0)
+            {
+                foreach (var ai in listOfAi)
+                {
+                    nextMoveToWin.ForEach(w => w.Remove(ai));
+                }
+                foreach (var pl in listOfPlayer)
+                {
+                    nextMoveToWin.ForEach(w => w.Remove(pl));
+                }
+
+                if (nextMoveToWin?.Any() == true)
+                {
+                    var a = nextMoveToWin.FirstOrDefault(w => w.Count > 0);
+
+                    if (a?.Any() == true)
+                    {
+                        var setupMove = a?.FirstOrDefault();
+
+                        return setupMove;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private (List<(int, int)>,List<(int, int)>) GetBoardState(PieceStyle pieceStyle)
         {
             List<(int, int)> listOfAi = [];
             List<(int, int)> listOfPlayer = [];
@@ -173,12 +220,12 @@ namespace BlazorApp1.Models
             {
                 for (int j = 0; j < _rowsAndCols; j++)
                 {
-                    var piece = Board[i,j];
+                    var piece = Board[i, j];
 
                     switch (piece.Style)
                     {
                         case PieceStyle.X:
-                            if(pieceStyle == PieceStyle.X)
+                            if (pieceStyle == PieceStyle.X)
                             {
                                 listOfAi.Add((i, j));
                             }
@@ -200,9 +247,19 @@ namespace BlazorApp1.Models
                         case PieceStyle.Blank:
                         default:
                             break;
-                    };
+                    }
                 }
             }
+
+            return (listOfAi, listOfPlayer);
+        }
+
+        private (int, int)? NextMoveToWin(PieceStyle pieceStyle)
+        {
+            var state = GetBoardState(pieceStyle);
+
+            List<(int, int)> listOfAi = state.Item1;
+            List<(int, int)> listOfPlayer = state.Item2;
 
             List<List<(int, int)>> combos = [];
             foreach(var wc in WinningCombos)

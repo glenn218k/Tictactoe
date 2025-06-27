@@ -25,6 +25,11 @@ namespace BlazorApp1.Models
             Reset();
         }
 
+        public void SetPlayerOneColor(string color)
+        {
+            PlayerOne.Color = color;
+        }
+
         public void Reset()
         {
             CurrentTurn = PlayerOne;
@@ -52,9 +57,10 @@ namespace BlazorApp1.Models
             {
                 for (int j = 0; j < _rowsAndCols; j++)
                 {
-                    pieceBlankCount = Board[i, j].Style == PieceStyle.Blank
-                                        ? pieceBlankCount + 1
-                                        : pieceBlankCount;
+                    if (Board[i, j].Style == PieceStyle.Blank)
+                    {
+                        pieceBlankCount++;
+                    }
                 }
             }
 
@@ -155,7 +161,7 @@ namespace BlazorApp1.Models
         public string GetGameCompleteMessage()
         {
             var winningPlay = GetWinner();
-            return winningPlay != null ? $"{winningPlay.WinningName} ({winningPlay.WinningStyle}) Wins!" : "Draw!";
+            return winningPlay != null ? $"{winningPlay.WinningName} ({winningPlay.WinningStyle}) Wins!" : "Cat's Game!";
         }
 
         public bool IsGamePieceAWinningPiece(int i, int j)
