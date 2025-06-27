@@ -6,11 +6,11 @@ namespace BlazorApp1.Models
     {
         protected readonly int _rowsAndCols;
 
-        public static Player PlayerOne { get; } = new Player() { PieceStyle = PieceStyle.X, Name = "Player One", Icon = "X", Color = "Red" };
+        public Player PlayerOne { get; } = new Player() { PieceStyle = PieceStyle.X, Name = "Player One", Icon = "X", Color = "Red" };
 
         public GamePiece[,] Board { get; private set; }
 
-        public Player CurrentTurn = PlayerOne;
+        public Player CurrentTurn { get; set; }
 
         public bool IsGameComplete => GetWinner() != null || IsADraw();
 
@@ -28,6 +28,11 @@ namespace BlazorApp1.Models
         public void SetPlayerOneColor(string color)
         {
             PlayerOne.Color = color;
+        }
+
+        public void SetPlayerOneIcon(string icon)
+        {
+            PlayerOne.Icon = icon;
         }
 
         public void Reset()
@@ -149,7 +154,8 @@ namespace BlazorApp1.Models
                     WinningMoves = winningMoves,
                     WinningStyle = other.PieceStyle,
                     WinningDirection = dir,
-                    WinningName = other.Name
+                    WinningName = other.Name,
+                    WinningIcon = other.Icon
                 };
             }
 
@@ -161,7 +167,7 @@ namespace BlazorApp1.Models
         public string GetGameCompleteMessage()
         {
             var winningPlay = GetWinner();
-            return winningPlay != null ? $"{winningPlay.WinningName} ({winningPlay.WinningStyle}) Wins!" : "Cat's Game!";
+            return winningPlay != null ? $"{winningPlay.WinningName} ({winningPlay.WinningIcon}) Wins!" : "Cat's Game!";
         }
 
         public bool IsGamePieceAWinningPiece(int i, int j)

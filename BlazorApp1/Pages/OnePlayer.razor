@@ -29,9 +29,9 @@
 
     .sampleColor {
         border: solid 1px black;
-        min-height: 10px;
+        min-height: 20px;
         min-width: 10px;
-        max-height: 10px;
+        max-height: 20px;
         max-width: 100px;
     }
 </style>
@@ -40,11 +40,11 @@
 
 @if (!board.IsGameComplete)
 {
-    <h2>@board.CurrentTurn.Name's (@board.CurrentTurn.Icon) Turn!</h2>
+    <h2>@board.CurrentTurn.Name's (@((MarkupString)board.CurrentTurn.Icon!)) Turn!</h2>
 }
 else
 {
-    <h2>@board.GetGameCompleteMessage()</h2>
+    <h2>@((MarkupString)board.GetGameCompleteMessage())</h2>
 }
 
 <button class="btn btn-success" style="height:34px" @onclick="@(() => board.Reset())">Reset</button>
@@ -58,26 +58,39 @@ else
                 int x = i;
                 int y = j;
                 <div class="gamepiece" style="color:@(board.GetColor(board.Board[i, j].Style))" @onclick="@(() => board.PieceClicked(x, y))">
-                    @(board.GetIcon(board.Board[i, j].Style))
+                    @((MarkupString)(board.GetIcon(board.Board[i, j].Style)))
                 </div>
             }
         </div>
     }
 </div>
 
-<div>
-    <h2>Player One Name</h2>
-    <h2>Player One Name</h2>
-    <h2>Player One Color</h2>
-    <ul>
+<div class="board">
+    <div>
+        <h2>Player One Color</h2>
         @foreach (var colorName in cssColors)
         {
-            <li class="sampleColor" style="background-color:@colorName" @onclick="@(() => @board.SetPlayerOneColor(@colorName))">@colorName</li>
+            <div class="sampleColor" style="background-color:@colorName" @onclick="@(() => @board.SetPlayerOneColor(@colorName))" />
         }
-    </ul>
+    </div>
+    <div>
+        <h2>Player One Icon</h2>
+        @foreach (var icon in SegoeSymbolCodes)
+        {
+            <div @onclick="@(() => @board.SetPlayerOneIcon(@icon))">
+                @((MarkupString)icon)
+            </div>
+        }
+    </div>
+    <div>
+        <h2>Player One Name</h2>
+        <input type="text" @bind="@board.PlayerOne.Name" />
+    </div>
 </div>
 
 @code {
+    private List<string> SegoeSymbolCodes { get; set; } = [];
+
     private List<string> cssColors = new List<string>();
 
     protected override void OnInitialized()
@@ -91,6 +104,11 @@ else
             {
                 cssColors.Add(color.Name);
             }
+        }
+
+        for(int i = 32; i < 9983; i++)
+        {
+            SegoeSymbolCodes.Add($"&#{i:0000};");
         }
     }
 

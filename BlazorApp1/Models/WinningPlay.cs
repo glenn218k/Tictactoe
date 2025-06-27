@@ -8,5 +8,6 @@ namespace BlazorApp1.Models
         public EvaluationDirection WinningDirection { get; set; }
         public PieceStyle WinningStyle { get; set; }
         public string? WinningName { get; set; }
+        public string? WinningIcon { get; set; }
     }
 }
