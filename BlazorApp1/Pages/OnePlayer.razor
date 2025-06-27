@@ -30,7 +30,7 @@
     .sampleColor {
         border: solid 1px black;
         min-height: 20px;
-        min-width: 10px;
+        min-width: 100px;
         max-height: 20px;
         max-width: 100px;
     }
@@ -68,19 +68,21 @@ else
 <div class="board">
     <div>
         <h2>Player One Color</h2>
-        @foreach (var colorName in cssColors)
-        {
-            <div class="sampleColor" style="background-color:@colorName" @onclick="@(() => @board.SetPlayerOneColor(@colorName))" />
-        }
+        <select class="sampleColor" @bind ="@board.PlayerOne.Color" style="background-color:@board.PlayerOne.Color">
+            @foreach (var colorName in cssColors)
+            {
+                <option class="sampleColor" style="background-color:@colorName" value="@colorName"></option>
+            }
+        </select>
     </div>
     <div>
         <h2>Player One Icon</h2>
-        @foreach (var icon in SegoeSymbolCodes)
-        {
-            <div @onclick="@(() => @board.SetPlayerOneIcon(@icon))">
-                @((MarkupString)icon)
-            </div>
-        }
+        <select @bind="@board.PlayerOne.Icon">
+            @foreach (var icon in SegoeSymbolCodes)
+            {
+                <option value="@icon">@((MarkupString)icon)</option>
+            }
+        </select>
     </div>
     <div>
         <h2>Player One Name</h2>
