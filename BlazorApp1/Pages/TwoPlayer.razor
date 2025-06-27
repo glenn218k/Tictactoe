@@ -24,20 +24,31 @@
         text-align: center;
         font-size: 38px;
     }
+
+    .sampleColor {
+        border: solid 1px black;
+        min-height: 20px;
+        min-width: 100px;
+        max-height: 20px;
+        max-width: 100px;
+    }
 </style>
 
 <PageTitle>Two Player Tic Tac Toe</PageTitle>
 
 @if (!board.IsGameComplete)
 {
-    <h2>@board.CurrentTurn.Name's (@board.CurrentTurn.PieceStyle) Turn!</h2>
+    <h2>@board.CurrentTurn.Name's (@((MarkupString)board.CurrentTurn.Icon!)) Turn!</h2>
 }
 else
 {
-    <h2>@board.GetGameCompleteMessage()
-        <button class="btn btn-success" style="height:34px" @onclick="@(() => board.Reset())">Reset</button>
-    </h2>
+    <h2>@((MarkupString)board.GetGameCompleteMessage())</h2>
 }
+
+<button class="btn btn-success" @onclick="@(() => board.Reset())">Reset</button>
+
+<br />
+<p />
 
 <div class="board">
     @for (int i = 0; i < 3; i++)
@@ -48,13 +59,92 @@ else
                 int x = i;
                 int y = j;
                 <div class="gamepiece" style="color:@(board.GetColor(board.Board[i, j].Style))" @onclick="@(() => board.PieceClicked(x, y))">
-                    @(board.GetIcon(board.Board[i, j].Style))
+                    @((MarkupString)(board.GetIcon(board.Board[i, j].Style)))
                 </div>
             }
         </div>
     }
 </div>
 
+<br />
+<p />
+
+<div class="board">
+    <div class="columnplayer">
+        <div>
+            <h4>Player One Name</h4>
+            <input type="text" @bind="@board.PlayerOne.Name" />
+        </div>
+        <div>
+            <h4>Player One Icon</h4>
+            <select @bind="@board.PlayerOne.Icon">
+                @foreach (var icon in SegoeSymbolCodes)
+                {
+                    <option value="@icon">@((MarkupString)icon)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <h4>Player One Color</h4>
+            <select class="sampleColor" @bind="@board.PlayerOne.Color" style="background-color:@board.PlayerOne.Color">
+                @foreach (var colorName in cssColors)
+                {
+                    <option class="sampleColor" style="background-color:@colorName" value="@colorName"></option>
+                }
+            </select>
+        </div>
+    </div>
+    <div style="width:20px">
+    </div>
+    <div class="columnplayer">
+        <div>
+            <h4>Player Two Name</h4>
+            <input type="text" @bind="@board.PlayerTwo.Name" />
+        </div>
+        <div>
+            <h4>Player Two Icon</h4>
+            <select @bind="@board.PlayerTwo.Icon">
+                @foreach (var icon in SegoeSymbolCodes)
+                {
+                    <option value="@icon">@((MarkupString)icon)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <h4>Player Two Color</h4>
+            <select class="sampleColor" @bind="@board.PlayerTwo.Color" style="background-color:@board.PlayerTwo.Color">
+                @foreach (var colorName in cssColors)
+                {
+                    <option class="sampleColor" style="background-color:@colorName" value="@colorName"></option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
 @code {
     TwoPlayerGameBoard board = new TwoPlayerGameBoard();
+
+    private List<string> SegoeSymbolCodes { get; set; } = [];
+
+    private List<string> cssColors = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        // Get all known color names from System.Drawing.KnownColor enum
+        foreach (System.Drawing.KnownColor known in Enum.GetValues(typeof(System.Drawing.KnownColor)))
+        {
+            var color = System.Drawing.Color.FromKnownColor(known);
+            // Filter out system colors and add to the list
+            if (!color.IsSystemColor)
+            {
+                cssColors.Add(color.Name);
+            }
+        }
+
+        for (int i = 32; i < 9983; i++)
+        {
+            SegoeSymbolCodes.Add($"&#{i:0000};");
+        }
+    }
 }
