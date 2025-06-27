@@ -39,7 +39,7 @@ namespace BlazorApp1.Models
             }
         }
 
-        public static Player PlayerAi { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "CPU", Icon = "O", Color = "Blue" };
+        public Player PlayerAi { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "CPU", Icon = "O", Color = "Blue" };
 
         //Given the coordinates of the space that was clicked...
         public override void PieceClicked(int x, int y)

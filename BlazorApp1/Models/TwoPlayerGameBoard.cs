@@ -4,7 +4,7 @@ namespace BlazorApp1.Models
 {
     public class TwoPlayerGameBoard : GameBoard
     {
-        public static Player PlayerTwo { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "Player Two", Icon = "O", Color = "Blue" };
+        public Player PlayerTwo { get; } = new Player() { PieceStyle = PieceStyle.O, Name = "Player Two", Icon = "O", Color = "Blue" };
 
         public TwoPlayerGameBoard()
             : base(3) { }
