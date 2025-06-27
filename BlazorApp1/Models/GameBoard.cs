@@ -18,8 +18,51 @@ namespace BlazorApp1.Models
 
         public abstract string GetColor(PieceStyle style);
 
+        public static List<string> SegoeSymbolCodes => GetIcons();
+
+        public static List<string> CssColors => GetColors();
+
+        private static List<string>? _icons;
+        private static List<string> GetIcons()
+        {
+            if (_icons == null)
+            {
+                _icons = [];
+
+                for (int i = 32; i < 9983; i++)
+                {
+                    _icons.Add($"&#{i:0000};");
+                }
+            }
+
+            return _icons;
+        }
+
+        private static List<string>? _colors;
+        private static List<string> GetColors()
+        {
+            if (_colors == null)
+            {
+                _colors = [];
+
+                // Get all known color names from System.Drawing.KnownColor enum
+                foreach (System.Drawing.KnownColor known in Enum.GetValues(typeof(System.Drawing.KnownColor)))
+                {
+                    var color = System.Drawing.Color.FromKnownColor(known);
+                    // Filter out system colors and add to the list
+                    if (!color.IsSystemColor)
+                    {
+                        _colors.Add(color.Name);
+                    }
+                }
+            }
+
+            return _colors;
+        }
+
         protected GameBoard(int rowsAndCols)
         {
+            CurrentTurn = PlayerOne;
             Board = new GamePiece[_rowsAndCols, _rowsAndCols];
             _rowsAndCols = rowsAndCols;
             Reset();

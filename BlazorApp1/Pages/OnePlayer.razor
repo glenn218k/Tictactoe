@@ -85,7 +85,7 @@ else
         <div>
             <h4>Player One Icon</h4>
             <select @bind="@board.PlayerOne.Icon">
-                @foreach (var icon in SegoeSymbolCodes)
+                @foreach (var icon in GameBoard.SegoeSymbolCodes)
                 {
                     <option value="@icon">@((MarkupString)icon)</option>
                 }
@@ -94,7 +94,7 @@ else
         <div>
             <h4>Player One Color</h4>
             <select class="sampleColor" @bind="@board.PlayerOne.Color" style="background-color:@board.PlayerOne.Color">
-            @foreach (var colorName in cssColors)
+                @foreach (var colorName in GameBoard.CssColors)
             {
                 <option class="sampleColor" style="background-color:@colorName" value="@colorName"></option>
             }
@@ -111,7 +111,7 @@ else
         <div>
             <h4>CPU Icon</h4>
             <select @bind="@board.PlayerAi.Icon">
-                @foreach (var icon in SegoeSymbolCodes)
+                @foreach (var icon in GameBoard.SegoeSymbolCodes)
                 {
                     <option value="@icon">@((MarkupString)icon)</option>
                 }
@@ -120,7 +120,7 @@ else
         <div>
             <h4>CPU Color</h4>
             <select class="sampleColor" @bind="@board.PlayerAi.Color" style="background-color:@board.PlayerAi.Color">
-                @foreach (var colorName in cssColors)
+                @foreach (var colorName in GameBoard.CssColors)
                 {
                     <option class="sampleColor" style="background-color:@colorName" value="@colorName"></option>
                 }
@@ -130,28 +130,5 @@ else
 </div>
 
 @code {
-    private List<string> SegoeSymbolCodes { get; set; } = [];
-
-    private List<string> cssColors = new List<string>();
-
-    protected override void OnInitialized()
-    {
-        // Get all known color names from System.Drawing.KnownColor enum
-        foreach (System.Drawing.KnownColor known in Enum.GetValues(typeof(System.Drawing.KnownColor)))
-        {
-            var color = System.Drawing.Color.FromKnownColor(known);
-            // Filter out system colors and add to the list
-            if (!color.IsSystemColor)
-            {
-                cssColors.Add(color.Name);
-            }
-        }
-
-        for(int i = 32; i < 9983; i++)
-        {
-            SegoeSymbolCodes.Add($"&#{i:0000};");
-        }
-    }
-
     OnePlayerGameBoard board = new OnePlayerGameBoard();
 }
